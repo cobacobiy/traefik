@@ -1,0 +1,129 @@
+http:
+  routers:
+    node8:
+      entryPoints:
+        - web                # HTTP saja karena SSL sudah di NPM
+      rule: "Host(`node8.loc.8cafetaria.my.id`)"
+#      tls: {}
+      service: node1
+      middlewares:
+        - forwarded-https
+
+    switch:
+      entryPoints:
+        - web
+      rule: "Host(`mi.loc.8cafetaria.my.id`)"
+#      tls: {}
+      service: switch
+
+    nextcloud:
+      entryPoints:
+        - web
+      rule: "Host(`nc.loc.8cafetaria.my.id`)"
+#      tls: {}
+      service: nextcloud
+
+    pbs1:
+      entryPoints:
+        - web
+      rule: "Host(`node8pbs.loc.8cafetaria.my.id`)"
+#      tls: {}
+      service: pbs1
+
+  middlewares:
+    # Middleware untuk memastikan backend tahu request awal HTTPS
+    forwarded-https:
+      headers:
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
+
+  services:
+    node8:
+      loadBalancer:
+#        serversTransport: insecure   # perlu karena backend HTTPS self-signed
+        servers:
+          - url: "https://192.168.4.144:8006"
+        passHostHeader: true
+
+    switch:
+      loadBalancer:
+#        serversTransport: insecure
+        servers:
+          - url: "http://192.168.4.1"
+        passHostHeader: true
+
+    nextcloud:
+      loadBalancer:
+#        serversTransport: insecure
+        servers:
+          - url: "https://192.168.4.145"
+        passHostHeader: true
+
+    pbs1:
+      loadBalancer:
+#        serversTransport: insecure
+        servers:
+          - url: "https://192.168.4.146:8007"
+        passHostHeader: true
+
+
+# ===============================
+# GLOBAL
+# ===============================
+global:
+  checkNewVersion: false
+  sendAnonymousUsage: false
+
+# ===============================
+# ENTRYPOINTS
+# ===============================
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+# ===============================
+# API & DASHBOARD
+# ===============================
+api:
+  dashboard: true
+#  insecure: false
+  debug: true
+
+# ===============================
+# PROVIDERS
+# ===============================
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik
+    watch: true
+#    network: proxy
+
+# ===============================
+# CERTIFICATES (Cloudflare DNS)
+# ===============================
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: sbs.tran@gmail.com
+      storage: /ssl-certs/acme.json
+      dnsChallenge:
+        provider: cloudflare
+        delayBeforeCheck: 10
+        resolvers:
+          - "1.1.1.1:53"
+          - "8.8.8.8:53"
+
+serversTransport:
+  insecureSkipVerify: true
+# ===============================
+# LOGGING
+# ===============================
+log:
+  level: INFO
+
+accessLog: {}
