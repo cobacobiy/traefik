@@ -3,7 +3,7 @@ http:
     node8:
       entryPoints:
         - web                # HTTP saja karena SSL sudah di NPM
-      rule: "Host(`node8.loc.8cafetaria.my.id`)"
+      rule: "Host(`node1.web.com`)"
 #      tls: {}
       service: node1
       middlewares:
@@ -12,21 +12,21 @@ http:
     switch:
       entryPoints:
         - web
-      rule: "Host(`mi.loc.8cafetaria.my.id`)"
+      rule: "Host(`miweb.co`)"
 #      tls: {}
       service: switch
 
     nextcloud:
       entryPoints:
         - web
-      rule: "Host(`nc.loc.8cafetaria.my.id`)"
+      rule: "Host(`nc.web.co`)"
 #      tls: {}
       service: nextcloud
 
     pbs1:
       entryPoints:
         - web
-      rule: "Host(`node8pbs.loc.8cafetaria.my.id`)"
+      rule: "Host(`node1pbs.web.co`)"
 #      tls: {}
       service: pbs1
 
@@ -42,28 +42,28 @@ http:
       loadBalancer:
 #        serversTransport: insecure   # perlu karena backend HTTPS self-signed
         servers:
-          - url: "https://192.168.4.144:8006"
+          - url: "https://192.168.xxx.xxx:8006"
         passHostHeader: true
 
     switch:
       loadBalancer:
 #        serversTransport: insecure
         servers:
-          - url: "http://192.168.4.1"
+          - url: "http://192.168.xxx.xxx"
         passHostHeader: true
 
     nextcloud:
       loadBalancer:
 #        serversTransport: insecure
         servers:
-          - url: "https://192.168.4.145"
+          - url: "https://192.168.xxx.xxx"
         passHostHeader: true
 
     pbs1:
       loadBalancer:
 #        serversTransport: insecure
         servers:
-          - url: "https://192.168.4.146:8007"
+          - url: "https://192.168.xxx.xxx:8007"
         passHostHeader: true
 
 
@@ -109,7 +109,7 @@ providers:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: sbs.tran@gmail.com
+      email: email@email.com
       storage: /ssl-certs/acme.json
       dnsChallenge:
         provider: cloudflare
