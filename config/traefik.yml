@@ -28,7 +28,7 @@ entryPoints:
 certificatesResolvers:
   cloudflare:
     acme:
-      email: sbs.tran@gmail.com
+      email: email@email.com
       storage: /ssl-certs/acme.json
       caServer: "https://acme-v02.api.letsencrypt.org/directory"
 #       -- (Optional) Remove this section, when using DNS Challenge
